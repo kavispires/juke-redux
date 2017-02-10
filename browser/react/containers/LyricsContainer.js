@@ -2,7 +2,7 @@ import React from 'react';
 import store from '../store';
 import Lyrics from '../components/Lyrics';
 
-import { setLyrics } from '../action-creators/lyrics';
+import { setLyrics, fetchLyrics } from '../action-creators/lyrics';
 import axios from 'axios';
 
 
@@ -13,7 +13,7 @@ export default class extends React.Component {
 			artistQuery: '',
 			songQuery: ''
 		}, store.getState());
-		
+
 		this.setArtist = this.setArtist.bind(this);
 		this.setSong = this.setSong.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,16 +39,11 @@ export default class extends React.Component {
 
 	handleSubmit (evt) {
 		evt.preventDefault();
-		console.log('here');
+		// console.log('here');
 		const artistName = this.state.artistQuery;
 		const songName = this.state.songQuery;
 		if (artistName && songName) {
-			console.log('inside if statement')
-			axios.get(`/api/lyrics/${artistName}/${songName}`)
-			.then (res => res.data)
-			.then (result => {
-				store.dispatch(setLyrics(result.lyric));
-			});
+			store.dispatch(fetchLyrics(artistName, songName));
 		}
 	}
 
@@ -56,7 +51,7 @@ export default class extends React.Component {
 
 		return (
 				<Lyrics
-					text={this.state.text}
+					text={this.state.lyrics.text}
 					setArtist={this.setArtist}
 					artistQuery={this.state.artistQuery}
 					setSong={this.setSong}
